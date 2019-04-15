@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>获取门票</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/redpacket.css" />
+    <style>
+    html,body{
+			width:100%;
+		}
+		#wrap{
+		    display: -webkit-box;
+		    display: -webkit-flex;
+		    display: flex;
+		    -webkit-box-orient: vertical;
+		    -webkit-flex-flow: column;
+		           flex-flow: column;
+		}
+		#header{
+		    text-align: center; 
+			color: #ffffff;
+		    width: 100%;
+		    position:relative;
+		    padding-top: 22px;
+			background-color: #fff;
+			border: none;
+			background-size: 100% 1px;
+			background-repeat: no-repeat;
+			background-position: bottom;
+			background-image: linear-gradient(0,#ededed,#ededed 50%,transparent 50%);
+			background-image: -webkit-linear-gradient(90deg,#ededed,#ededed 50%,transparent 50%);
+		}
+		#header .back-icon {
+		    background: rgba(0, 0, 0, 0) url("../../image/back2.png") no-repeat 0 center;
+		    background-size: 22px auto;
+		    bottom: 0;
+		    display: inline-block;
+			min-width: 22px;
+		    height: 44px;
+		    line-height:44px;
+		    left: 9px;
+		    position: absolute;
+		    font-size: 16px;
+		}
+		#header h1{
+		    font-size: 18px; height: 44px; line-height: 44px; margin: 0; color: #333; font-weight: normal;
+		}
+        .aui-list .aui-list-item{ padding: 0; margin: 0 0.75rem; }
+    </style>
+
+</head>
+<body>
+   <div id="wrap">
+		<div id="header">
+			<a class="back-icon" tapmode onclick="api.closeWin();"></a>
+			<h1><span>获取门票</span></h1>
+		</div>
+	</div>
+	
+<div class="coupon-box">
+
+    <ul class="aui-list aui-list-in coupon-list">
+        <li tapmode onclick="openMap();" class="aui-list-item aui-list-item-arrow">
+            <div class="aui-list-item-media">
+                <img src="../../image/redpacket/map-coupon.png">
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">地图抢"门票"
+                    <div class="legend">地图抢红包有几率开到“门票”哦</div>
+                </div>
+            </div>
+        </li>
+        <li tapmode onclick="openCouponBuy();" class="aui-list-item aui-list-item-arrow">
+            <div class="aui-list-item-media">
+                <img src="../../image/redpacket/buy-coupon.png">
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">购买门票
+                    <div class="legend">现金购买门票</div>
+                </div>
+            </div>
+        </li>
+        <li tapmode onclick="openShare();" class="aui-list-item aui-list-item-arrow">
+            <div class="aui-list-item-media">
+                <img src="../../image/redpacket/invite-friends.png">
+            </div>
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-title">邀请微信好友
+                    <div class="legend">邀请新的好友加入，免费获取“门票”</div>
+                </div>
+            </div>
+        </li>
+
+    </ul>
+</div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common/global.js"></script>
+<script type="text/javascript">
+apiready = function(){
+	//加载数据
+}
+
+/**
+ *地图抢"门票"
+ */
+function openMap(){
+	//发送事件，在index页中监听
+	api.sendEvent({
+	    name:'openGainMapEvent',
+	    extra: {
+	    	type : 1
+	    }
+    });
+}
+
+/**
+ * 购买门票
+ */
+function openCouponBuy(){
+	var params = { page : '../redpacket/coupon_buy', title : '购买门票' };
+	global.openWinName('couponBuyWin', '../common/common_win', params);
+}
+
+/**
+ *邀请微信好友 
+ */
+    
+function openShare(){
+	var dialogBox = api.require('dialogBox');
+	dialogBox.actionMenu ({
+	    rect:{
+	        h: 142
+	    },
+	    texts:{
+	         cancel: '取消'
+	    },
+	    isCuttingLine:true,
+	    items:[{
+			        text: '微信好友',
+			        icon: 'widget://image/receive/share-wechat-icon.png'
+			    }],
+	    styles:{
+	        bg:'#FFF',
+	        column: 1,
+	        itemText: {
+	            color: '#303030',
+	            size: 12,
+	            marginT:16
+	        },
+	        itemIcon:{
+	            size:38
+	        },
+	        cancel:{  
+	            bg: '#fff',
+	            color:'#333',
+	            h: 48 ,
+	            size: 14       
+	        }
+	    }
+	}, function(ret){
+		if(ret && ret.eventType == 'cancel'){
+			dialogBox.close({
+			    dialogName: 'actionMenu'
+			});
+		}
+	    if(ret){
+	    	switch(ret.index){
+	    		case 0:
+	    			shareWx('session','session');
+	    			break;
+	    	}
+	    }
+	});
+}
+
+function shareWx(shareType, platType) {
+		var wx = api.require('wx');
+		wx.isInstalled(function(ret, err) {
+			if (ret.installed) {
+				wx.shareWebpage({
+					scene : shareType,
+					title : '123红包',
+					description : '邀请新的好友加入，免费获取“门票”',
+					thumb : 'widget://image/icon108x108.png',
+					contentUrl : global.getShareUri() + '/wechat/share_rear.html?mobile='+global.getMobile()
+				}, function(ret, err) {
+					dialogBox.close({
+						 dialogName: 'actionMenu'
+					});
+				});
+			} else {
+				global.setToast('当前设备未安装微信客户端');
+			}
+		});
+	}
+
+</script>
+</html>

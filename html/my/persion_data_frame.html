@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>个人资料</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/my.css" />
+    <style>
+        .aui-list .aui-list-item-inner { min-height: 2.5rem; }
+        .aui-list.aui-list-in .aui-list-item { background-image: none; }
+        .line-t{ background-size: 91.666% 1px; }
+        .aui-list .aui-list-item-title{ color: #666; }
+        .aui-list .aui-list-item-right{ color: #333; }
+        .summary-textarea textarea{ height: 4.5rem; }
+        .aui-list .aui-list-item-title{ min-width: 3rem; }
+    </style>
+</head>
+<body>
+<div class="aui-content">
+    <ul class="aui-list aui-list-in">
+        <li class="aui-list-item" tapmode='' onclick="changeIcon();">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">更换头像</div>
+                <div class="aui-list-item-right">
+                    <div class="aui-list-item-media aui-margin-r-0" style="width:2.5rem;">
+                        <img id='headIconId' onerror="this.src='../../image/my/tx-img.jpg'" class="aui-img-round">
+                    </div>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item"  tapmode=''>
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title" style="width: 1.8rem">昵称</div>
+                <input id='nickNameId' type='text' maxlength="10" value="" style="width: 100%; text-align: right;">
+            </div>
+        </li>
+        <li class="aui-list-item"  tapmode='' onclick="changeSex();">
+            <div class="aui-list-item-inner aui-list-item-arrow" >
+                <div class="aui-list-item-title">性别</div>
+                <div id='sexId' class="aui-list-item-right"></div>
+            </div>
+        </li>
+        <li class="aui-list-item"  tapmode='' onclick='editBirthday();'>
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-title">生日</div>
+                <div  id='birthdayId'  class="aui-list-item-right"></div>
+            </div>
+        </li>
+
+    </ul>
+
+    <div class="line-t">
+
+        <ul class="aui-list aui-list-in aui-margin-t-10">
+
+            <li class="aui-list-item" tapmode='' onclick="changeMobile();" >
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">手机号</div>
+                    <div  id='mobileId' class="aui-list-item-right"></div>
+                </div>
+            </li>
+
+            <li class="aui-list-item"  tapmode='' onclick="choiceCity();">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">所在城市</div>
+                    <div id="cityId" class="aui-list-item-right"></div>
+                </div>
+            </li>
+            <li class="aui-list-item" tapmode='' onclick="changeTag();">
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">个性标签111</div>
+                    <div id='interestId' class="aui-list-item-right inner-my-label">
+	                    <span class="my-label">个性标签个性标签个性标</span>/
+	                    <span class="my-label">所在城市所在城市</span>/      
+	                    <span class="my-slh">手机号...</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="line-t">
+        <div class="summary-textarea aui-margin-t-10">
+            <h4>简介</h4>
+            <textarea id="content" class="mui-input-clear question" placeholder="请用一段话来形容你自己" oninput="summaryContent();" maxlength="140"></textarea>
+            <P><span id="word">0</span>/140</P>
+        </div>
+    </div>
+
+    <div class="auth-photo-box">
+        <h4><span>宣传图</span><em>（最多6张）</em></h4>
+        <div class="ui-feedback-photo">
+            <div id="div0" class="position-r">
+                <img id="img0" tabmode="" onclick="selectImage(0)" src="../../image/my/photo-button.png">
+                <img id="icon0" tabmode="" onclick="deleteImage(0);" src="../../image/send/delete-icon.png" class="aui-delete-icon aui-hide">
+            </div>
+            <div id="div1" class="position-r aui-hide">
+                <img id="img1" tabmode="" onclick="selectImage(1)" src="../../image/my/photo-button.png">
+                <img id="icon1" tabmode="" onclick="deleteImage(1);" src="../../image/send/delete-icon.png" class="aui-delete-icon aui-hide">
+            </div>
+            <div id="div2" class="position-r aui-hide">
+                <img id="img2" tabmode="" onclick="selectImage(2)" src="../../image/my/photo-button.png">
+                <img id="icon2" tabmode="" onclick="deleteImage(2);"src="../../image/send/delete-icon.png" class="aui-delete-icon aui-hide">
+            </div>
+            <div id="div3" class="position-r aui-hide">
+                <img id="img3" tabmode="" onclick="selectImage(3)" src="../../image/my/photo-button.png">
+                <img id="icon3" tabmode="" onclick="deleteImage(3);" src="../../image/send/delete-icon.png" class="aui-delete-icon aui-hide">
+            </div>
+            <div id="div4" class="position-r aui-hide">
+                <img id="img4" tabmode="" onclick="selectImage(4)" src="../../image/my/photo-button.png">
+                <img id="icon4" tabmode="" onclick="deleteImage(4);" src="../../image/send/delete-icon.png" class="aui-delete-icon aui-hide">
+            </div>
+
+            <div id="div5" class="position-r aui-hide">
+                <img id="img5" tabmode="" onclick="selectImage(5)" src="../../image/my/photo-button.png">
+                <img id="icon5" tabmode="" onclick="deleteImage(5);" src="../../image/send/delete-icon.png" class="aui-delete-icon aui-hide">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js" ></script>
+<script type="text/javascript" src="../../script/common/global.js" ></script>
+<script type="text/javascript" src="../../script/my/persion_data_frame.js" ></script>
+</html>

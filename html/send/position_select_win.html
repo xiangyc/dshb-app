@@ -1,0 +1,314 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>位置选择</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<style>
+		html,body{
+			height: 100%;
+			width:100%;
+		}
+		#wrap{
+			height: 100%;
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-box-orient: vertical;
+			-webkit-flex-flow: column;
+			flex-flow: column;
+		}
+		#header{
+			text-align: center;
+			color: #ffffff;
+			width: 100%;
+			position:fixed;
+			top: 0;
+			padding-top: 22px;
+			background-color: #FF9000;
+			background: -moz-linear-gradient(56deg, #FF9000, #FFB400) !important;
+			background: -webkit-gradient(linear,0 50%,100% 50%,from(#FF9000),to(#FFB400)) !important;
+			background: -webkit-linear-gradient(56deg, #FF9000, #FFB400) !important;
+			background: -o-linear-gradient(56deg, #FF9000, #FFB400) !important;
+			z-index: 3;
+		}
+		#header .back-icon {
+			background: rgba(0, 0, 0, 0) url("../../image/back.png") no-repeat 0 center;
+			background-size: 22px auto;
+			bottom: 0;
+			display: inline-block;
+			min-width: 22px;
+			height: 44px;
+			line-height:44px;
+			left: 9px;
+			position: absolute;
+			font-size: 16px;
+		}
+		.aui-content-padded {
+			padding: 0.75rem;
+			background-color: #ffffff;
+			margin-top: 0.75rem;
+		}
+		.aui-header{
+			background-color: #FF9000;
+			background: -moz-linear-gradient(56deg, #FF9000, #FFB400) !important;
+			background: -webkit-gradient(linear,0 50%,100% 50%,from(#FF9000),to(#FFB400)) !important;
+			background: -webkit-linear-gradient(56deg, #FF9000, #FFB400) !important;
+			background: -o-linear-gradient(56deg, #FF9000, #FFB400) !important;
+		}
+		.aui-searchbar{ padding-left: 1.7rem; }
+		.aui-searchbar-clear-btn{ width: 0.9rem; height: 0.9rem; margin: 0.1rem; }
+		.aui-searchbar-clear-btn .aui-iconfont{ top: 0; line-height: 0.9rem; }
+		.aui-searchbar-input{ background-color: transparent; border-bottom: 1px solid #fff;  border-radius: 0; padding-left: 0; color: #fff; }
+		.aui-searchbar-input input{ color: #fff !important; }
+		.aui-searchbar-input input::-webkit-input-placeholder{color:#fff;}
+		.aui-searchbar-input input::-moz-placeholder{color:#fff;}
+		.aui-searchbar-input input:-moz-placeholder{color:#fff;}
+		.aui-searchbar .aui-iconfont{ color: #fff !important; opacity: 1; }
+		.aui-searchbar-clear-btn{ background-color: #fff !important;   }
+		.aui-iconfont.aui-icon-close{ color: #333 !important;   }
+	</style>
+</head>
+<body>
+<!--老的cp   position_search_win.html-->
+<!--	<div id="wrap">
+		<div id="header">
+			<a tapmode="" class="back-icon" onclick="api.closeWin();">返回</a>
+			<h1><span id="title">选择位置</span></h1>
+			<a tapmode="" class="right-text" onclick="confirmSelectLocation();" >确认</a>
+		</div>
+
+		<div id="search" class="aui-searchbar">
+	        <div tapmode onclick="openSearchWin();" class="aui-searchbar-input aui-border-radius">
+	            <i class="aui-iconfont aui-icon-search aui-icon-search-c"></i>
+	            <input id="search-input" disabled="disabled" type="search" placeholder="搜索你要的坐标位置">
+	        </div>
+		</div>
+	</div>-->
+
+	<div id="wrap">
+		<div id="header">
+			<a class="back-icon" tapmode onclick="api.closeWin();"></a>
+			<div class="aui-searchbar aui-header" id="search">
+				<div tapmode onclick="openSearchWin();" class="aui-searchbar-input aui-border-radius">
+					<i class="aui-iconfont aui-icon-search"></i>
+					<input type="search" disabled="disabled" placeholder="搜索你要的坐标位置" id="search-input">
+					<div id="closeIcon" class="aui-searchbar-clear-btn">
+						<i tapmode onclick="clearText();" class="aui-iconfont aui-icon-close"></i>
+					</div>
+				</div>
+				<div tapmode="" onclick="confirmSelectLocation();" class="aui-searchbar-btn" style="margin-right: 0; color:#fff;">确认</div>
+			</div>
+		</div>
+	</div>
+
+
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+	var aMap;
+	var longitude;
+	var latitude;
+	var regionName;
+	var address;
+	
+	apiready = function(){
+	    openFrame();
+	    initEvent();
+	}
+	
+	/**
+	 *打开frame 
+	 */
+	function openFrame(){
+		var header = $api.byId('header');
+	    if(header){
+	        $api.fixIos7Bar(header);
+	    }
+	    var pos = $api.offset(header);
+	    //var search = $api.offset($api.byId('search'));
+	    var $body = $api.dom('body');
+		var body_h = $api.offset($body).h;
+		//var rect_h = body_h - pos.h - search.h - 200;
+		var rect_h = body_h - pos.h - 200;
+	
+	    api.openFrame({
+	        name: 'position_select_frame',
+	        url: 'position_select_frame.html',
+	        rect:{
+	            x: 0,
+	            y: api.frameHeight - 200,
+	            w: 'auto',
+	            h: 200
+	        },
+	        pageParam : api.pageParam,
+	        bounces: false,
+	        vScrollBarEnabled: false
+	    });
+	    
+	    aMap = api.require('aMap');
+	    if(api.pageParam.longitude && api.pageParam.latitude){
+			//openMap(pos.h + search.h, rect_h, api.pageParam.longitude, api.pageParam.latitude);
+			openMap(pos.h, rect_h, api.pageParam.longitude, api.pageParam.latitude);
+		}else{
+			//openMap(pos.h + search.h, rect_h, 0, 0);
+			openMap(pos.h, rect_h, 0, 0);
+		}
+	}
+	
+	/**
+	 *初始化事件 
+	 */
+	function initEvent(){
+		api.addEventListener({
+			name : 'selectLocationEvent'
+		}, function(ret, err) {
+			if (ret && ret.value) {
+				longitude = ret.value.lon;
+				latitude = ret.value.lat;
+				regionName = ret.value.regionName;
+				address = ret.value.address;
+				
+				setCenterLocation(longitude, latitude, ret.value.query, true);	
+			}
+		});
+	}
+	
+	/**
+	 *打开地图 
+	 */
+	function openMap(y, h, lon, lat) {	
+		longitude = lon;
+		latitude = lat;
+		aMap.open({
+			rect : {
+				x : 0,
+				y : y,
+				w : api.frameWidth,
+				h : h
+			},
+       		center: {
+                lon: lon,
+                lat: lat
+			},
+			zoomLevel : 17,
+			showUserLocation : true,
+		    fixedOn: api.frameName,
+		    fixed: true
+		}, function(ret) {
+			if (ret.status) {
+				aMap.getLocation(function(ret, err) {
+				    if (ret.status) {						
+						longitude = ret.lon;
+						latitude = ret.lat;
+						setCenterLocation(longitude, latitude, true, false);	
+				    }
+				});
+			}
+		});
+	}
+
+	/**
+	 *设置中心点 
+	 */
+	function setCenterLocation(lon, lat, query, select){
+	   aMap.setCenter({
+		    coords: {
+		        lon: lon,
+		        lat: lat
+		    }
+		});
+		
+		aMap.removeAnnotations({
+		    ids: [1]
+		});
+		aMap.addAnnotations({
+			annotations: [{
+			    id: 1,
+			    lon: lon,
+			    lat: lat
+			}],
+			icons: ['widget://image/send/position-icon.png'],
+		    draggable: true
+		}, function(ret) {
+		    if (ret.eventType == 'drag') {
+		    	dragAnnotation();
+		    }
+		});
+			
+		if(query){		
+			searchNearby(lon, lat, select);
+		}
+	}
+	
+	/**
+	 *定位 
+	 */
+	function dragAnnotation(){
+		aMap.getAnnotationCoords({
+		    id: 1
+		}, function(ret) {
+		    if (ret) {
+		    	setCenterLocation(ret.lon, ret.lat, true, false);
+		    }
+		});
+	}
+	
+	/**
+	 *查询当前地址地址 
+	 */
+	function searchNearby(lon, lat, select) {
+		aMap.searchNearby({
+		    lon: lon,
+		    lat: lat,
+		    radius: 100,
+		    offset: 10
+		}, function(ret, err) {
+		    if (ret.status) {
+		    	setTimeout(function(){
+					api.sendEvent({
+		                name :'searchNearbyEvent',
+		                extra : {
+		                	pois : ret.pois,
+		                	lon : longitude,
+		                	lat : latitude,
+		                	regionName : regionName,
+		                	address : address,
+		                	select : select
+		                }
+	                });
+                },300);
+		    }
+		});
+	}
+	
+	/**
+	 *打开查询窗 
+	 */
+	function openSearchWin(){
+		api.openWin({
+			name : 'position_search_win',
+			url : 'position_search_win.html',
+			pageParam : { "lon" : longitude, "lat" : latitude }
+		});
+	}
+	
+	/**
+	 *确认选择位置 
+	 */
+	function confirmSelectLocation(){
+		//alert('position select confirm regionName:'+regionName+' lon'+longitude+',lat'+latitude);
+		api.sendEvent({
+	        name:'confirmSelectLocationEvent',
+	        extra: {
+	        	lon: longitude,
+	        	lat: latitude,
+	        	regionName: regionName
+	        }
+        });
+	}
+</script>
+</html>

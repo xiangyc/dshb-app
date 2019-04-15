@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>个人资料</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/my.css" />
+	<style>
+		body{ position: relative; }
+		#header{
+			text-align: center;
+			color: #ffffff;
+			width: 100%;
+			position:relative;
+			padding-top: 22px;
+			background-color: #FF9000;
+			background: -moz-linear-gradient(56deg, #FF9000, #FFB400) !important;
+			background: -webkit-gradient(linear,0 50%,100% 50%,from(#FF9000),to(#FFB400)) !important;
+			background: -webkit-linear-gradient(56deg, #FF9000, #FFB400) !important;
+			background: -o-linear-gradient(56deg, #FF9000, #FFB400) !important;
+		}
+		#header .back-icon {
+			background: rgba(0, 0, 0, 0) url("../../image/back.png") no-repeat 0 center;
+			background-size: 22px auto;
+			bottom: 0;
+			display: inline-block;
+			min-width: 22px;
+			height: 44px;
+			line-height:44px;
+			left: 9px;
+			position: absolute;
+			font-size: 16px;
+		}
+		#header h1{
+			font-size: 18px; height: 44px; line-height: 44px; margin: 0em; color: #ffffff; font-weight: normal;
+		}
+		#header .right-text{
+	        background-size: 1.4rem auto;
+	        bottom: 0;
+	        display: block;
+	        height: 44px;
+	        right: 7px;
+	        position: absolute;
+	        width: 40px;
+	        line-height: 44px;
+	        font-size: 14px;
+			color: #fff !important;
+		}
+		.aui-list .aui-list-item-inner { min-height: 2.5rem; }
+		.aui-list.aui-list-in .aui-list-item { background-image: none; }
+		.line-t{ background-size: 91.666% 1px; }
+		.aui-list .aui-list-item-title{ color: #666; }
+		.aui-list .aui-list-item-right{ color: #333; text-align: right; }
+		.summary-textarea textarea{ height: 7.8rem; }
+		.aui-list .aui-list-item-title{ min-width: 3.3rem; }
+		.aui-list-item .aui-list-item-inner .my-label{ display: contents; float: none; }
+		.aui-list-item .aui-list-item-inner .my-slh{ display: contents; float: none;}
+	</style>
+</head>
+<body>
+	<div id="wrap">
+		<div id="header">
+			<a tapmode="" class="back-icon" onclick="infoBack();"></a>
+			<h1><span id="title">个人资料</span></h1>
+			<a tapmode="" class="right-text" onclick="save()" >保存</a>
+		</div>
+	</div>
+	<div class="aui-content">
+    	<ul class="aui-list aui-list-in">
+	        <li class="aui-list-item" tapmode='' onclick="changeIcon();">
+	            <div class="aui-list-item-inner aui-list-item-arrow">
+	                <div class="aui-list-item-title">更换头像</div>
+	                <div class="aui-list-item-right">
+	                    <div class="aui-list-item-media aui-margin-r-0" style="width:2.5rem;">
+	                     <img id='headIconId' onerror="this.src='../../image/my/tx-img.jpg'" class="aui-img-round">
+						</div>
+	                </div>
+	            </div>
+	        </li>
+	        <li class="aui-list-item"  tapmode=''>
+	            <div class="aui-list-item-inner aui-list-item-arrow">
+	                <div class="aui-list-item-title" style="width: 1.8rem">昵称</div>
+	                <input id='nickNameId' type='text' maxlength="10" value="" style="width: 100%; text-align: right;">
+	            </div>
+	        </li>
+	        <li class="aui-list-item"  tapmode='' onclick="changeSex();">
+	            <div class="aui-list-item-inner aui-list-item-arrow" >
+	                <div class="aui-list-item-title">性别</div>
+	                <div id='sexId' class="aui-list-item-right"></div>
+	            </div>
+	        </li>
+			<li class="aui-list-item"  tapmode='' onclick='editBirthday();'>
+				<div class="aui-list-item-inner aui-list-item-arrow">
+					<div class="aui-list-item-title">生日</div>
+					<div id='birthdayId' class="aui-list-item-right"></div>
+				</div>
+			</li>
+
+	    </ul>
+
+		<div class="line-t">
+
+			<ul class="aui-list aui-list-in aui-margin-t-10">
+
+				<li class="aui-list-item" tapmode='' onclick="changeMobile();" >
+					<div class="aui-list-item-inner aui-list-item-arrow">
+						<div class="aui-list-item-title">手机号</div>
+						<div  id='mobileId' class="aui-list-item-right"></div>
+					</div>
+				</li>
+
+				<li class="aui-list-item"  tapmode='' onclick="choiceCity();">
+					<div class="aui-list-item-inner aui-list-item-arrow">
+						<div class="aui-list-item-title">所在城市</div>
+						<div id="cityId" class="aui-list-item-right"></div>
+					</div>
+				</li>
+				<li class="aui-list-item" tapmode='' onclick="changeTag();">
+					<div class="aui-list-item-inner aui-list-item-arrow">
+						<div class="aui-list-item-title">个性标签</div>
+						<div id='interestId' class="aui-list-item-right inner-my-label">
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<div class="line-t">
+			<div class="summary-textarea aui-margin-t-10">
+				<h4>简介</h4>
+				<textarea id="content" class="mui-input-clear question" placeholder="请用一段话来形容你自己" oninput="summaryContent();" maxlength="140"></textarea>
+				<P><span id="word">0</span>/140</P>
+			</div>
+		</div>
+
+		<div class="auth-photo-box">
+			<h4><span>宣传图</span><em>（最多6张）</em></h4>
+			<div class="ui-feedback-photo">
+				<div id="div0" class="position-r">
+					<img id="img0" tabmode="" onclick="selectImage(0)" src="../../image/my/photo-button.png">
+					<img id="icon0" tabmode="" onclick="deleteImage(0);" src="../../image/send/delete-icon.png" class="aui-close-icon aui-hide">
+				</div>
+				<div id="div1" class="position-r aui-hide">
+					<img id="img1" tabmode="" onclick="selectImage(1)" src="../../image/my/photo-button.png">
+					<img id="icon1" tabmode="" onclick="deleteImage(1);" src="../../image/send/delete-icon.png" class="aui-close-icon aui-hide">
+				</div>
+				<div id="div2" class="position-r aui-hide">
+					<img id="img2" tabmode="" onclick="selectImage(2)" src="../../image/my/photo-button.png">
+					<img id="icon2" tabmode="" onclick="deleteImage(2);" src="../../image/send/delete-icon.png" class="aui-close-icon aui-hide">
+				</div>
+				<div id="div3" class="position-r aui-hide">
+                    <img id="img3" tabmode="" onclick="selectImage(3)" src="../../image/my/photo-button.png">
+                    <img id="icon3" tabmode="" onclick="deleteImage(3);" src="../../image/close-icon.png" class="aui-close-icon aui-hide">
+                </div>
+                <div id="div4" class="position-r aui-hide">
+                    <img id="img4" tabmode="" onclick="selectImage(4)" src="../../image/my/photo-button.png">
+                    <img id="icon4" tabmode="" onclick="deleteImage(4);" src="../../image/close-icon.png" class="aui-close-icon aui-hide">
+                </div>
+                <div id="div5" class="position-r aui-hide">
+                    <img id="img5" tabmode="" onclick="selectImage(5)" src="../../image/my/photo-button.png">
+                    <img id="icon5" tabmode="" onclick="deleteImage(5);" src="../../image/close-icon.png" class="aui-close-icon aui-hide">
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common/global.js" ></script>
+<script type="text/javascript" src="../../script/my/persion_data_frame.js" ></script>
+</html>

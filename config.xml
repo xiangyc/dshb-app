@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget id="A6071989255831" version="0.0.1"> 
+  <name>电商红包app</name>  
+  <description>Example For APICloud.</description>  
+  <author email="developer@apicloud.com" href="http://www.apicloud.com">Developer</author>  
+  <content src="index.html"/>  
+  <preference name="pageBounce" value="false"/>  
+  <preference name="appBackground" value="rgba(0,0,0,0.0)"/>  
+  <preference name="windowBackground" value="rgba(0,0,0,0.0)"/>  
+  <preference name="frameBackgroundColor" value="rgba(0,0,0,0.0)"/>  
+  <preference name="hScrollBarEnabled" value="true"/>  
+  <preference name="vScrollBarEnabled" value="true"/>  
+  <preference name="autoLaunch" value="true"/>  
+  <preference name="fullScreen" value="false"/>  
+  <preference name="autoUpdate" value="true"/>  
+  <preference name="smartUpdate" value="true"/>  
+  <preference name="debug" value="false"/>  
+  <preference name="statusBarAppearance" value="true"/>  
+  <preference name="customRefreshHeader" value="UIPullRefreshFlash"/>  
+  <preference name="backgroundMode" value="remote-notification"/>  
+  <preference name="urlScheme" value="tencent101504667"/>  
+  <permission name="readPhoneState"/>  
+  <permission name="camera"/>  
+  <permission name="record"/>  
+  <permission name="location"/>  
+  <permission name="fileSystem"/>  
+  <permission name="internet"/>  
+  <permission name="bootCompleted"/>  
+  <permission name="hardware"/>  
+  <access origin="*"/>  
+  <feature name="aMap"> 
+    <param name="android_api_key" value="420d96db7da9bc9fa55bed38479ff2f5"/>  
+    <param name="ios_api_key" value="51d28cecc9c76c066f9497524d0dc178"/> 
+  </feature>  
+  <feature name="qq"> 
+    <param name="urlScheme" value="tencent101504667"/>  
+    <param name="apiKey" value="101504667"/> 
+  </feature>  
+  <feature name="wx"> 
+    <param name="urlScheme" value="wxdbde62608a3aa653"/>  
+    <param name="apiKey" value="wxdbde62608a3aa653"/>  
+    <param name="apiSecret" value="47c5a76f52196f01babd68b8e75a6026"/> 
+  </feature>  
+  <feature name="weibo"> 
+    <param name="urlScheme" value="wb2748374435"/>  
+    <param name="apiKey" value="2748374435"/>  
+    <param name="registUrl" value="https://weibo.com/"/> 
+  </feature>  
+  <feature name="aliPayPlus"> 
+    <param name="urlScheme" value="AliPayPlusA6071989255831"/> 
+  </feature>  
+  <feature name="ajpush"> 
+    <param name="app_key" value="ed8753ed947a2ff8341d6657"/>  
+    <param name="channel" value="maotuandianzi"/> 
+  </feature> 
+</widget>

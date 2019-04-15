@@ -1,0 +1,155 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>红包集-搜索</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/redpacket.css" />
+    <style>
+        #wrap{
+            height: 100%;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-flex-flow: column;
+            flex-flow: column;
+        }
+        #header{
+            text-align: center;
+            background-color: #fff;
+            color: #ffffff;
+            width: 100%;
+            position:relative;
+            padding-top: 22px;
+            border-bottom: 0.05rem solid #EDEDED;
+        }
+        #header .aui-title .aui-searchbar .aui-searchbar-btn{ color: #333; }
+        .aui-searchbar-input{ background-color: #f7f7f7; border-radius: 0.75rem !important; }
+        ::-webkit-input-placeholder{color:#999 !important;}
+        ::-moz-placeholder{color:#999 !important;}
+        :-moz-placeholder{color:#999 !important;}
+        #header .aui-title{ padding: 0 0.75rem; }
+    </style>
+
+</head>
+<body class="body-bg-white">
+<div id="wrap">
+    <div id="header">
+        <div class="aui-title">
+            <div class="aui-searchbar" id="search">
+                <div class="aui-searchbar-input aui-border-radius aui-margin-0">
+                    <i tapmode onclick="goSearch();" class="icon-search"><img src="../../image/redpacket/search-top-icon.png"/></i>
+                    <input type="search" onfocus="showHistory(1);" oninput="doSearch();" placeholder="输入你感兴趣的内容" id="search-input">
+
+                    <i id="closeIcon" tapmode onclick="clearText();" class="icon-close aui-hide"><img src="../../image/redpacket/search-close-icon.png"/></i>
+                </div>
+                <div class="aui-searchbar-btn" tapmode="" onclick="api.closeWin();">取消</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common/global.js"></script>
+<script type="text/javascript">
+	var keyword;
+	apiready = function(){
+	    var header = $api.byId('header');
+		$api.fixStatusBar(header);
+		
+	    var pos = $api.offset(header);
+
+		longitude = api.pageParam.lon;
+		latitude = api.pageParam.lat;
+	    api.openFrame({
+	        name: 'search_frame',
+	        url: 'search_frame.html',
+	        rect:{
+	            x: 0,
+	            y: pos.h,
+	            w: 'auto',
+	            h: 'auto'
+	        },
+	        pageParam : api.pageParam,
+	        bounces: false,
+	        vScrollBarEnabled: false
+	    });
+
+		setTimeout(function(){
+		    // 使用模块弹出键盘
+		    var softInput = api.require('softInputMgr');
+		    // 将相应的输入框获取焦点
+		    document.getElementById("search-input").focus();
+		    softInput.toggleKeyboard();
+		}, 300);
+		
+		api.addEventListener({
+			name : 'keyback'
+		}, function(ret, err) {
+			if($api.getStorage("photoBrowserClose") === "1"){
+				api.sendEvent({
+			        name:'photoBrowserCloseEvent'
+		        });
+	        }else{
+	        	api.closeWin();
+	        }
+		});
+	}
+	
+	/**
+	 *查找 
+	 */
+	function doSearch(){
+        var keywordTemp = $api.val($api.byId('search-input'));
+        if(keyword == keywordTemp){
+        	return;
+        }
+        
+        keyword = keywordTemp;
+        if(keyword.length < 1){
+        	$api.attr($api.byId('closeIcon'), 'style', 'display:none;');
+        	return;
+        }else{
+        	$api.attr($api.byId('closeIcon'), 'style', 'display:block;');
+        }
+
+//		api.execScript({
+//			frameName: 'search_frame',
+//		    script: "searchBusiness('" + keyword + "');"
+//	    });
+	}
+	
+	/**
+	 *查找 
+	 */
+	function goSearch(){
+		api.execScript({
+			frameName: 'search_frame',
+		    script: "searchBusiness('" + keyword + "');"
+	    });
+	}
+	
+	/**
+	 *清除文字 
+	 */
+	function clearText(){
+		$api.attr($api.byId('closeIcon'), 'style', 'display:none;');
+		$api.val($api.byId('search-input'), '');
+	}
+
+	/**
+	 *显示历史记录 
+	 */
+	function showHistory(type){
+		api.execScript({
+			frameName: 'search_frame',
+		    script: "showHistory(" + type + ");"
+	    });
+	}
+</script>
+</html>

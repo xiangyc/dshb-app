@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>抢红包</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/receive.css" />
+    <style>
+    	html,body {
+			background-color: transparent !important; position: relative;
+		}
+		.tear-reb-box{ top: 24.5%; }
+    </style>
+</head>
+<body>
+<div class="aui-mask aui-mask-in"></div>
+	<div class="tear-reb-box">
+        <div id="boxDiv" class="tear-reb-t">
+          <div class="tear-reb-share">
+            <div tapmode="" onclick="api.closeFrame();" class="close-red-icon"><img src="../../image/receive/close-red-icon.png"/> </div>
+          </div>
+          <div class="tear-reb-title">
+	          <i><img id="logoImg" src="../../image/icon108x108.png" onerror="this.src='../../image/icon108x108.png'" /> </i>
+	          <span id="nameSpan" class="aui-ellipsis-1">红包管家</span>
+          </div>
+
+          <div id="infoCloseDiv" class="tear-reb-info">
+              <span>给你发了一个红包</span>
+              <h2>你猜红包有多大！</h2>
+          </div>
+
+          <div id="infoOpenDiv" class="tear-reb-info aui-hide">
+                <h2>门票</h2>
+          </div>
+
+           <div id="dismantleDiv" tapmode onclick="dismantleRedPackets();" class="tear-reb-img ">拆红包</div>
+      </div>
+
+        <div id="noteDiv" class="tear-reb-mp aui-hide">门票用于“抢倒计时红包”活动</div>
+  </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common/global.js"></script>
+<script type="text/javascript">
+	//红包ID
+	var id;
+	var count=0;
+	apiready = function (){
+		id = api.pageParam.id;
+	}
+	
+	/**
+	 *拆红包 
+	 */
+	function dismantleRedPackets(){
+		$api.addCls($api.byId('dismantleDiv'), 'rotate');
+		api.ajax({
+			method : 'post',
+			cache : false,
+			dataType : 'json',
+			returnAll : false,
+			url : global.getRequestUri() + '/collection/gain-coupon',
+			headers : global.getRequestToken(),
+			data : {
+				values : {
+					couponId : id,
+				}
+			}
+		}, function(ret, err) {
+			$api.removeCls($api.byId('dismantleDiv'), 'rotate');
+			if(ret && ret.success){
+				$api.addCls($api.byId('infoCloseDiv'), 'aui-hide');
+				$api.removeCls($api.byId('infoOpenDiv'), 'aui-hide');
+				$api.removeCls($api.byId('noteDiv'), 'aui-hide');
+				$api.addCls($api.byId('boxDiv'), 'tear-reb-dismantle');
+				
+				$api.removeAttr($api.byId('dismantleDiv'), "onclick");
+				$api.html($api.byId('dismantleDiv'), ret.code+'张');
+				api.sendEvent({
+	                name:'dismantleCouponEvent',
+	                extra:{
+	                	id : id
+	                }
+                });
+				api.sendEvent({
+	                name:'memberStatisticsRefresh'
+                });
+                api.sendEvent({
+	                name:'financeAccountRefresh'
+                });
+			}else{
+				global.setToast(ret.message);
+			}
+		});
+	}
+	</script>
+</html>

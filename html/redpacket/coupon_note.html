@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>拆红包</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/redpacket.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/my.css" />
+    <style>
+    	html,body {
+			background-color: transparent !important;
+		}
+    </style>
+</head>
+<body>
+<div id="maskDiv" class="aui-mask aui-mask-in"></div>
+<div class="aui-dialog aui-dialog-li aui-dialog-in">
+    <div class="aui-dialog-header">提示</div>
+    <div class="aui-dialog-body2 text-align-l">
+        <p>1. 只有拥有“门票”的用户，才可以参与倒计时抢大额红包活动；<a id="seeA" class="aui-hide" tapmode onclick="openMap();">去看看>></a></p>
+        <p>2. 获取方式：
+            <em>a、首页地图中抢红包有几率获得；</em>
+            <em>b、邀请好友加入</em>
+            <em>c、购买</em>
+        </p>
+        <p>3.门票永久有效，可参加任意场次倒计时抢红包活动；
+    </div>
+    <div tapmode="" onclick="api.closeFrame();" class="close-icon-w"><img src="../../image/my/close-icon.png"> </div>
+</div> 
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript">
+apiready=function(){
+	if(api.pageParam.see === 1){
+		$api.removeCls($api.byId('seeA'), 'aui-hide');
+	}
+}
+
+/**
+ *地图抢"门票"
+ */
+function openMap(){
+	//发送事件，在index页中监听
+	api.sendEvent({
+	    name:'openGainMapEvent'
+    });
+}
+</script>
+</html>

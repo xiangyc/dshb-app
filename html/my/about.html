@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>关于我们</title>
+    <link rel="stylesheet" type="text/css" href="../../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+  <style>
+        html,body{
+            height: 100%;
+            width:100%;
+        }
+        #wrap{
+            /* height: 100%;*/
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-flex-flow: column;
+            flex-flow: column;
+        }
+        #header{
+            text-align: center;
+            color: #ffffff;
+            width: 100%;
+            position:relative;
+            padding-top: 22px;
+            background-color: #FF9000;
+            background: -moz-linear-gradient(56deg, #FF9000, #FFB400) !important;
+            background: -webkit-gradient(linear,0 50%,100% 50%,from(#FF9000),to(#FFB400)) !important;
+            background: -webkit-linear-gradient(56deg, #FF9000, #FFB400) !important;
+            background: -o-linear-gradient(56deg, #FF9000, #FFB400) !important;
+        }
+        #header a{ color: #fff; }
+        #header .back-icon {
+            background: rgba(0, 0, 0, 0) url("../../image/back.png") no-repeat 0 center;
+            background-size: 22px auto;
+            bottom: 0;
+            display: inline-block;
+            min-width: 22px;
+            height: 44px;
+            line-height:44px;
+            left: 9px;
+            position: absolute;
+            font-size: 16px;
+        }
+        #header .right-text{
+            background-size: 1.4rem auto;
+            bottom: 0;
+            display: block;
+            height: 44px;
+            right: 12px;
+            position: absolute;
+            line-height: 44px;
+            font-size: 16px;
+        }
+        #header h1{
+            font-size: 18px; height: 44px; line-height: 44px; margin: 0em; color: #ffffff; font-weight: normal;
+        }
+        .aboutus-wz{ position: absolute; bottom: 1.25rem; text-align: center; color: #999; width: 100%; }
+        .aboutus-wz span{ color: #595c5f; display: inline-block; font-size: 0.6rem; font-weight: bold; height: 22px; line-height: 22px; }
+        .aboutus-wz p{ color: #C6C6C5; font-size: 0.55rem; line-height: 1; padding-top: 0.3rem; }
+        .aboutus-wz p.c{font-size: 0.4rem; }
+        .aui-content {
+            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+            word-break: break-all;
+        }
+      .aboutus{ padding-top: 2.95rem; margin:0 1.7rem; }
+      .aboutus img{ width: 2.9rem; height: 2.9rem; margin: 0 auto;}
+      .aboutus h1{ font-weight: bold; font-size: 0.9rem; line-height: 1; color: #333; text-align: center; margin-top: 2.95rem; padding-bottom: 1.15rem; }
+      .aboutus p{ font-size: 0.65rem; line-height: 1.5; color: #666; }
+  </style>
+</head>
+<body>
+
+<div id="wrap">
+    <div id="header">
+        <a class="back-icon" tapmode onclick="api.closeWin();"></a>
+        <h1><span id="title">关于我们</span></h1>
+    </div>
+</div>
+<div class="aui-content">
+
+    <div class="aboutus">
+        <img src="../../image/my/logo.png"/>
+        <h1>关于我们</h1>
+		<p id='content'></p>
+    </div>
+
+    <div class="aboutus-wz">
+        <p>123红包</p>
+        <p class="c">©123hongbao.com.All rights reserved</p>
+        <p>河北猫团电子商务有限公司</p>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common/global.js"></script>
+<script type="text/javascript">
+
+    apiready = function(){
+        getContent();
+    }
+
+	function getContent() {
+		   api.ajax({
+                method : 'get',
+                cache : false,
+                dataType : 'json',
+                returnAll : false,
+                url : global.getRequestUri() + '/about?type=0',
+                headers : global.getRequestToken()
+            }, function(ret, err) {
+                if (ret) {
+                    if (ret.success) {                   
+
+                        $api.html($api.byId('content'), ret.obj.content);
+
+                    } else {
+                        global.setToast(ret.message);
+                    }
+                } else {
+                    global.setErrorToast();
+                }
+
+            });
+	}
+</script>
+</html>

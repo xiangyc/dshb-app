@@ -1,0 +1,505 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>红包集</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/redpacket.css" />
+    <style>
+    .user-name-info{ font-size: 0.75rem; color: #333; }
+    </style>
+
+</head>
+<body class="body-bg-ef">
+<div id="barDiv" class="search-win-box body-bg-white ">
+	<script id="record-template" type="text/x-dot-template">
+	{{ for(var i=0; i< it.length; i++) { }}
+	 <li id="{{=it[i].id}}"><span tapmode onclick="searchBusiness('{{=it[i].businessName}}')">{{=it[i].businessName}}</span></li>
+	{{}}}
+	</script>
+	
+	<div></div>
+    <h5>历史搜索<i tapmode onclick="clearRecord();"></i></h5>
+    <ul id="record-content">
+    </ul>
+	</div>
+</div>
+<div id="dataDiv" class="redpacket-box">
+<script id="list-template" type="text/x-dot-template">
+	{{ for(var i=0; i< it.length; i++) { }}
+	<div class="redpacket-ad-list">
+        <div class="redpacket-list-header">
+            <div class="user-avatar">
+                <img src="{{=global.getImgUri() + '/' + it[i].businessLogo}}" onerror="this.src='../../image/icon150x150.png'">
+            </div>
+            <div class="user-name">
+                <div class="user-name-info">{{=ruleName(it[i].businessName)}}</div>
+                <div tapmode onclick='showCollect({{=it[i].id}}, {{=it[i].collect}}, {{=it[i].memberId}});' class="redpacket-list-share"><img src="../../image/redpacket/more-icon.png"></div>
+            </div>
+            <div class="list-user-info"><span><em>{{=global.formatDate(it[i].sendTime, 'yyyy-MM-dd') }}</em></span><span>浏览数：<em>{{=it[i].browse}}</em></span></div>
+        </div>
+
+        <div class="redpacket-content-padded">{{=it[i].summary}}</div>
+        <div tapmode onclick="openDetail({{=it[i].id}}, '{{=it[i].businessName}}');" class="redpacket-see">查看详情</div>
+        <div class="aui-card-list-content">
+            <div class="aui-row aui-row-padded redpacket-ad-img">
+            	{{ for(var j=0; j<it[i].banners.length; j++){ }}
+                <div class="aui-col-xs-4">
+                    <img tapmode onclick="imageBrowse({{=it[i].id}},{{=j+1}});" src="{{=global.getImgUri() + '/' + it[i].banners[j].banner}}" onerror="this.src='../../image/icon150x150.png'" />
+                </div>
+                {{　} }}
+            </div>
+        </div>
+        <div class="redpacket-contact line-b">
+        <span><i><img src="../../image/send/phone-icon-s.png"/></i>
+            <em>
+            {{ if(it[i].contact){ }}
+                    {{=it[i].contact}}
+            {{ }else {}}
+                    无
+            {{ } }}
+            </em>
+        </span>
+            <span><i><img src="../../image/send/weixin-icon-s.png"/></i>
+            <em>
+            {{ if(it[i].wx){ }}
+                {{=it[i].wx}}
+            {{ }else {}}
+                无
+            {{ } }}
+	       </em>
+        </span>
+        </div>
+    </div>
+    {{ } }}
+    </script>
+    
+    <div id="list-content">  
+    </div>
+    
+	<div id="noDataDiv" class="aui-hide" style="height: 16.5rem; text-align: center; padding-top: 5rem; color: #999;  font-size:0.7rem;">
+		暂无数据
+	</div>
+</div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/library/doT.min.js"></script>
+<script type="text/javascript" src="../../script/common/page.js"></script>
+<script type="text/javascript" src="../../script/common/global.js"></script>
+<script type="text/javascript">
+	var photoBrowser;
+	var keyword;
+	
+	apiready = function(){
+	 	photoBrowser = api.require('photoBrowser');
+		getSearchRecord();
+		
+		initEvent();
+	}
+	
+	/**
+	 * 初始化事件
+	 */
+	function initEvent() {
+  	    api.addEventListener({
+		    name:'photoBrowserCloseEvent'
+	    },function(ret,err){
+	    	$api.setStorage("photoBrowserClose","0");
+	    	photoBrowser.close();
+	    	api.closeFrame({
+	    		name: 'photoBrowserFrame'
+	        });
+	        api.closeFrame({
+	    		name: 'photoBrowserBottomFrame'
+	        });
+	    });
+	}
+
+	/**
+	 *搜索记录 
+	 */
+	function getSearchRecord(){
+		api.ajax({
+			method : 'get',
+			cache : false,
+			timeout : 30,
+			dataType : 'json',
+			returnAll : false,
+			url : global.getRequestUri() + '/collection/search-record',
+			headers : global.getRequestToken()
+		}, function(ret, err) {		
+	
+			if(ret ){
+				if(ret.length ==0){
+					$api.addCls($api.byId('barDiv'), 'aui-hide');
+				}
+				
+	            var template = $api.byId("record-template").text;
+	            var tempFun = doT.template(template);
+				$api.html($api.byId("record-content"),  tempFun(ret));
+			}
+		});
+	}
+	
+	/**
+	 *搜索商家 
+	 */
+	function searchBusiness(businessName){
+		keyword = businessName;
+		$api.addCls($api.byId('barDiv'), 'aui-hide');
+		var params = '?start=0&maxResult=20&businessName=' + businessName;
+		var url = global.getRequestUri() + '/collection/search';
+
+		page.init(10, 'list-content', 'list-template', url, params, true, "noDataDiv");
+		
+		setTimeout(function(){
+			getSearchRecord();
+		}, 1000);
+	}
+	
+	/**
+	 *详情 
+	 */
+	function selectBusiness(advId, advname){
+		api.openWin({
+		    name: 'advDetailWin',
+		    url: './search_detail.html',
+		    pageParam: {
+		    	id: advId,
+		        name: advname
+		    }
+	    });
+	}
+	
+	/**
+	 *删除搜索记录 
+	 */
+	function deleteRecord(id){
+		api.ajax({
+				method : 'put',
+				cache : false,
+				timeout : 30,
+				dataType : 'json',
+				returnAll : false,
+				url : global.getRequestUri() + '/collection/search-record-remove?id=' + id,
+				headers : global.getRequestToken()
+			}, function(ret, err) {
+			if(ret){
+                $api.remove($api.byId(id));
+			}
+		});
+	}
+	
+	/**
+	 *清除搜索记录 
+	 */
+	function clearRecord(){
+		api.ajax({
+			method : 'put',
+			cache : false,
+			timeout : 30,
+			dataType : 'json',
+			returnAll : false,
+			url : global.getRequestUri() + '/collection/search-record-clear',
+			headers : global.getRequestToken()
+		}, function(ret, err) {
+			if(ret){
+				$api.addCls($api.byId('barDiv'), 'aui-hide');
+                $api.html($api.byId('record-content'), '');
+			}
+		});
+	}
+	
+	/**
+	 *详情 
+	 */
+	function openDetail(advId, advname){
+		api.openWin({
+		    name: 'advDetailWin',
+		    url: './search_detail.html',
+		    pageParam: {
+		    	id: advId,
+		        name: advname
+		    }
+	    });
+	}
+	
+	/**
+	 *显示历史记录面板 
+	 */
+	function showHistory(type){
+	
+//		if(type === 1){
+//			//$api.removeCls($api.byId('barDiv'), 'aui-hide');
+//		}else{
+//			$api.addCls($api.byId('barDiv'), 'aui-hide');
+//		}
+	}
+	
+	/**
+	 *收藏 
+	 */
+	function showCollect(redPacketsId, collect, memberId){
+		var collectText = "收藏红包";
+		var operate = 1;
+		
+		if(collect){
+			collect = "取消收藏";
+			operate = 2;
+		}
+		api.actionSheet({
+	    	cancelTitle : '取消',
+	        style:{
+	            itemNormalColor:'#ffffff', 
+	            itemPressColor:'#ffffff', 
+	            fontNormalColor:'#fc531f',
+	            fontPressColor:'#fc531f',
+	            titleFontColor:'#ececec'
+	        },
+	        buttons : [collectText, '分享好友']
+	    }, function(ret, err) {
+	        if (ret) {
+	        	if(ret.buttonIndex == 1){
+	        		api.ajax({
+						method : 'post',
+						cache : false,
+						dataType : 'json',
+						returnAll : false,
+						url : global.getRequestUri() + '/collect/operate',
+						headers : global.getRequestToken(),
+						data : {
+							values : {
+								id : redPacketsId,
+								collectBusinessId : memberId,
+								redpacketType : 2,
+								type : operate
+							}
+						}
+					}, function(ret, err) {
+						if(ret){
+							if(ret.success){
+								global.setToast((type == 1 ? '收藏' : '取消收藏') + '成功');
+							}else{
+								global.setToast(ret.message);
+							}
+						}else{
+							global.setErrorToast();
+						}
+					});
+	        	}else if(ret.buttonIndex === 2){
+        			openShare();
+        		}
+	        }
+	    });
+	}
+
+	/**
+	 *浏览图片 
+	 */
+	function imageBrowse(redpacketId, index){
+	    api.ajax({
+	        method : 'get',
+	        cache : true,
+	        timeout : 30,
+	        dataType : 'json',
+	        returnAll : false,
+	        url : global.getRequestUri() + '/collection/banners?type=2&redPacketsId='+redpacketId,
+	        headers : global.getRequestToken()
+	    }, function(ret, err) {
+	        if(ret){
+	        	var banners = ret;
+				for(var i=0; i<banners.length; i++){
+					banners[i] = global.getImgUri() + '/' + banners[i].banner;
+				}
+				
+	        	photoBrowser.open({
+				    images: banners,
+				    activeIndex: index-1,
+				    placeholderImg: 'widget://image/icon150x150.png',
+				    bgColor: '#000'
+				}, function(ret, err) {
+					$api.setStorage("photoBrowserClose","1");
+					if(ret){
+						if(ret.eventType == 'change'){
+							api.sendEvent({
+					            name:'imageChangeEvent',
+					            extra: {
+					            	currentIndex : ret.index + 1
+					            }
+				            });
+			            }
+			            
+			            if(ret.eventType == 'show'){			            
+		            	    api.openFrame({
+							    name: 'photoBrowserFrame',
+							    url: './imageBar.html',
+							    rect: {
+								    x:0,
+								    y:0,
+								    w:'auto',
+								    h:88
+							    }
+						    });
+						    api.openFrame({
+							    name: 'photoBrowserBottomFrame',
+							    url: './imageBottomBar.html',
+							    rect: {
+								    x:0,
+								    y:api.winHeight - 64,
+								    w:'auto',
+								    h:64
+							    },
+							    pageParam:{
+							    	currentIndex: index,
+							    	total: banners.length,
+							    	banners:banners
+							    }
+						    });
+			            }
+					}
+				});
+	        }
+	    });
+	}	
+    
+    /**
+     *分享 
+     */
+    function openShare(){
+    	var dialogBox = api.require('dialogBox');
+		dialogBox.actionMenu ({
+		    rect:{
+		        h: 142
+		    },
+		    texts:{
+		         cancel: '取消'
+		    },
+		    isCuttingLine : true,
+		    items:[{
+				        text: 'QQ好友',
+				        icon: 'widget://image/receive/share-qq-icon.png'
+				    }, {
+				        text: '微信好友',
+				        icon: 'widget://image/receive/share-wechat-icon.png'
+				    }, {
+				        text: '朋友圈',
+				        icon: 'widget://image/receive/share-friend-icon.png'
+				    }
+//				    , {
+//				        text: '新浪微博',
+//				        icon: 'widget://image/receive/share-sina-icon.png'
+//				    }
+				    ],
+		    styles:{
+		        bg:'#FFF',
+		        column: 3,
+		        itemText: {
+		            color: '#303030',
+		            size: 12,
+		            marginT:16
+		        },
+		        itemIcon:{
+		            size:38
+		        },
+		        cancel:{  
+		            bg: '#fff',
+		            color:'#333',
+		            h: 48 ,
+		            size: 14       
+		        }
+		    }
+		}, function(ret){
+			if(ret && ret.eventType == 'cancel'){
+				dialogBox.close({
+				    dialogName: 'actionMenu'
+				});
+			}
+		    if(ret){
+		    	switch(ret.index){
+		    	   case 0:
+		    			shareQzone('QFriend','qfriend');
+		    			break;
+		    		case 1:
+		    			shareWx('session','session');
+		    			break;
+		    		case 2:
+		    			shareWx('timeline','timeline');
+		    			break;
+	
+		    		case 3:
+		    			shareWeiBo('weibo','weibo');
+		    			break;
+		    	}
+		    }
+		});
+    }
+    
+    function shareQzone(shareType, platType) {
+		var qq = api.require('qq');
+		qq.installed(function(ret, err) {
+			if (ret.status) {
+				qq.shareNews({
+					url : global.getShareUri() + '/wechat/share_rear.html?mobile=' + global.getMobile(),
+					title : '我发现了一个抢红包软件，快来抢~',
+					description : '天天有红包，红包抢不停',
+					imgUrl : global.getShareUri() + '/image/my/logo-icon.png',
+					type : shareType
+				});
+			} else {
+				global.setToast('当前设备未安装QQ客户端');
+			}
+		});
+	}
+
+	function shareWx(shareType, platType) {
+		var wx = api.require('wx');
+		wx.isInstalled(function(ret, err) {
+			if (ret.installed) {
+				wx.shareWebpage({
+					scene : shareType,
+					title : '我发现了一个抢红包软件，快来抢~',
+					description : '天天有红包，红包抢不停',
+					thumb : 'widget://image/icon108x108.png',
+					contentUrl : global.getShareUri() + '/wechat/share_rear.html?mobile=' + global.getMobile()
+				}, function(ret, err) {
+					dialogBox.close({
+						 dialogName: 'actionMenu'
+					});
+				});
+			} else {
+				global.setToast('当前设备未安装微信客户端');
+			}
+		});
+	}
+	
+	function shareWeiBo(shareType, platType) {
+		var weibo = api.require('weibo');
+		weibo.isInstalled(function(ret) {
+			if (ret.status) {
+				weibo.shareWebPage({
+					title : '我发现了一个抢红包软件，快来抢~',
+					description : '天天有红包，红包抢不停',
+					thumb : 'widget://image/icon150x150.png',
+					contentUrl : global.getShareUri() + '/wechat/share_rear.html?mobile=' + global.getMobile()
+				}, function(ret, err) {
+					dialogBox.close({
+						dialogName: 'actionMenu'
+					});
+				});
+			} else {
+				global.setToast('当前设备未安装新浪微博客客户端');
+			}
+		});
+	}
+	
+	function ruleName(name){
+		
+		name = name.replace(keyword,'<span style="color:#4F97F7;">'+keyword+'</span>');
+		return name;
+	}
+</script>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>我的</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/my.css" />
+    <style>
+        .aui-list-item-inner .aui-list-item-text.aui-font-size-12{ color: #ffefdd; }
+        .aui-list .aui-list-item-inner { min-height: 2.5rem; }
+        .aui-list .aui-list-item-media{ padding: 0.7rem 0;}
+        .aui-list.aui-list-in .aui-list-item{ background-image: none;}
+        .aui-list .aui-list-item{ border-bottom: none; }
+        .line-t{ background-size: 100% 1px; }
+        #header{
+            background-color: #FF9000;
+            background: -moz-linear-gradient(0deg, #FF9000, #FFB400) !important;
+            background: -webkit-gradient(linear,0 50%,100% 50%,from(#FF9000),to(#FFB400)) !important;
+            background: -webkit-linear-gradient(0deg, #FF9000, #FFB400) !important;
+            background: -o-linear-gradient(0deg, #FF9000, #FFB400) !important;
+        }
+        .bg-gradient{
+            background-color: #FF9000;
+            background: -moz-linear-gradient(0deg, #FF9000, #FFB400) !important;
+            background: -webkit-gradient(linear,0 50%,100% 50%,from(#FF9000),to(#FFB400)) !important;
+            background: -webkit-linear-gradient(0deg, #FF9000, #FFB400) !important;
+            background: -o-linear-gradient(0deg, #FF9000, #FFB400) !important;
+        }
+        .aui-dialog.aui-dialog-li{ top: 27%; }
+    </style>
+</head>
+<body>
+    <div class="aui-content">
+        <div class="aui-list aui-list-noborder aui-media-list bg-gradient my-top-box">
+            <div class="aui-media-list-item-inner ">
+                <div tapmode onclick="openSubWin(3);" class="aui-list-item-media" style="width:3rem;">
+                    <img id='headIconId' onerror="this.src='../../image/icon150x150.png'" class="aui-img-round tximg">
+                </div>
+                <div tapmode onclick="openSubWin(3);" class="aui-list-item-inner">
+                    <div id='nickNameId' class="aui-list-item-text aui-text-white aui-font-size-18 aui-padded-t-10"></div>
+                    <div id='' class="aui-list-item-text aui-font-size-12">点击查看或编辑个人资料</div>
+                </div>
+                <div class="my-ticket" tapmode onclick="openVoucher();">我的门票（<em id="couponCount">0</em>）</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="">
+        <div class="my-ad-box line-b">
+            <h3>我的广告</h3>
+            <ul>
+                <li tapmode="aui-active" onclick="openAdvWin(0);"><img src="../../image/my/myad-audit-icon.png"><p>审核中</p><i id="i0" class="aui-hide"></i></li>
+                <li tapmode="aui-active" onclick="openAdvWin(-1);"><img src="../../image/my/myad-notpass-icon.png"><p>未通过</p><i id="i-1" class="aui-hide"></i></li>
+                <li tapmode="aui-active" onclick="openAdvWin(1);"><img src="../../image/my/myad-pending-icon.png"><p>待付款</p><i id="i1" class="aui-hide"></i></li>
+                <li tapmode="aui-active" onclick="openAdvWin(2);"><img src="../../image/my/myad-published-icon.png"><p>已发布</p><i id="i2" class="aui-hide"></i></li>
+            </ul>
+        </div>
+
+        <ul class="aui-list aui-list-in my-main">
+
+            <li tapmode="aui-active" onclick="openSubWin(6);" class="aui-list-item">
+                <div style="width: 1.1rem;" class="aui-list-item-media">
+                    <img src="../../image/my/my-finance-icon.png">
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">我的余额</div>
+                    <div class="aui-list-item-right" id="accountBalance">0.00元</div>
+                </div>
+            </li>
+
+            <li tapmode="aui-active" onclick="openSubWin(5);" class="aui-list-item">
+                <div style="width: 1.1rem;" class="aui-list-item-media">
+                    <img src="../../image/my/my-red-icon.png">
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">我的红包</div>
+                </div>
+            </li>
+
+            <li tapmode="aui-active" onclick="openSubWin(7);" class="aui-list-item">
+                <div style="width: 1.1rem;" class="aui-list-item-media">
+                    <img src="../../image/my/my-collect-icon.png">
+                </div>
+                <div class="aui-list-item-inner aui-list-item-arrow">
+                    <div class="aui-list-item-title">我收藏的红包</div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="line-t">
+            <ul class="aui-list aui-list-in my-main">
+
+                <li  tapmode="aui-active" onclick="openSubWin(8);" tapmode="aui-active" class="aui-list-item">
+                    <div style="width: 1.1rem;" class="aui-list-item-media">
+                        <img src="../../image/my/my-ranking-icon.png">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow">
+                        <div class="aui-list-item-title">红包排行榜</div>
+                    </div>
+                </li>
+
+                <li  tapmode="aui-active" onclick="openSubWin(9);" class="aui-list-item">
+                    <div style="width: 1.1rem;" class="aui-list-item-media">
+                        <img src="../../image/my/my-auth-icon.png">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow">
+                        <div class="aui-list-item-title">商家认证</div>
+                        <!--认证已加上color-green-->
+                        <div id="authDiv" class="aui-list-item-right <!--color-green-->">未认证</div>
+                    </div>
+                </li>
+                <li id="bindWxId" tapmode="aui-active" onclick="openSubWin(10);" class="aui-list-item">
+                    <div style="width: 1.1rem;" class="aui-list-item-media">
+                        <img src="../../image/my/my-bindweixin-icon.png">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow">
+                        <div class="aui-list-item-title">绑定微信账号</div>
+                        <div id="oauthDiv" class="aui-list-item-right">未绑定</div>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+        <div class="line-t">
+            <ul class="aui-list aui-list-in my-main">
+                <li id="bindWxId" tapmode="aui-active" onclick="openSubWin(2);" class="aui-list-item">
+                    <div style="width: 1.1rem;" class="aui-list-item-media">
+                        <img src="../../image/my/my-set-icon.png">
+                    </div>
+                    <div class="aui-list-item-inner aui-list-item-arrow">
+                        <div class="aui-list-item-title">设置</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!--提示-->
+    <div id="maskDiv" class="aui-mask aui-mask-in aui-hide"></div>
+    <div class="aui-dialog aui-dialog-li aui-dialog-in aui-hide">
+        <div class="aui-dialog-header">提示</div>
+        <div class="aui-dialog-body2 text-align-l">
+            <p>1. 只有拥有“门票”的用户，才可以参与倒计时抢大额红包活动；<a>去看看>></a></p>
+            <p>2. 获取方式：
+                <em>a、首页地图中抢红包有几率获得；</em>
+                <em>b、邀请好友加入</em>
+                <em>c、购买</em>
+            </p>
+            <p>3.门票永久有效，可参加任意场次倒计时抢红包活动；
+        </div>
+        <div class="close-icon-w"><img src="../../image/my/close-icon.png"> </div>
+
+    </div>
+
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common/global.js"></script>
+<script type="text/javascript" src="../../script/my/main.js"></script>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width"/>
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>红包集广告</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/send.css" />
+</head>
+<body>
+<!--审核中,请耐心等待...-->
+<div id="applingDiv" class="ad-map-box aui-hide">
+
+    <div class="ad-map-box">
+        <div class="ad-no-icon">
+            <img src="../../image/send/ing-icon.png">
+        </div>
+        <p class="ad-result-h ad-result-ing">审核中,请耐心等待...</p>
+    </div>
+    <div class="ad-content-textarea line-t">
+        <div class="textarea-c" id="content"></div>
+    </div>
+    <div class="ad-photo-box">
+        <div id="images" class="ui-feedback-photo">
+        </div>
+    </div>
+    <div class="collection-submit line-b">
+        <div class="bg"><i><img src="../../image/send/position-icon-s.png"></i><span id="locationDiv"></span></div>
+        <div class="bg"><i><img src="../../image/send/label-icon-s.png"></i><span id="interestDiv"></span></div>
+    </div>
+    <div class="collection-submit">
+        <div><i><img src="../../image/send/phone-icon-s.png"></i><span id="contactDiv"></span></div>
+        <div><i><img src="../../image/send/weixin-icon-s.png"></i><span id="wxDiv"></span></div>
+    </div>
+    <div class="ad-result-bottom" style="position: relative">
+        <p class="prompt-writing">根据《广告法》相关规定，需审核广告内容<br/><em tapmode onclick='callTel(18703115998);'>客服电话:18703115998</em></p>
+    </div>
+</div>
+
+<!--审核未通过-->
+<div id="failDiv" class="aui-hide">
+	<div class="ad-map-box body-bg-white">
+	    <div class="ad-no-icon">
+	        <img src="../../image/send/no-icon.png">
+	    </div>
+        <p class="ad-result-h ad-result-no">审核未通过</p>
+        <div class="ad-result-reason"><em>原因：</em><span id="auditNote"></span></div>
+        <ul class="ad-result-ul">
+	        <li>广告类型<span>红包集广告</span></li>
+	        <li>投放商家<span id="businessName1"></span></li>
+	    </ul>
+	</div>
+    <div class="aui-btn-box2">
+        <div tapmode onclick="openEditRedPacketsWin();" class="aui-btn btn-gradient">编辑广告内容</div>
+    </div>
+    <p tapmode onclick='callTel(18703115998);' class="prompt-writing">客服电话:18703115998</p>
+</div>
+
+<!--审核已通过-->
+<div id="passDiv" class="aui-hide">
+<div class="ad-map-box body-bg-white">
+    <div class="ad-no-icon">
+        <img src="../../image/send/ok-icon.png">
+    </div>
+    <p class="ad-result-h ad-result-ok">审核已通过</p>
+    <ul class="ad-result-ul line-t">
+        <li>广告类型<span>红包集广告</span></li>
+        <li>投放商家<span id="businessName2"></span></li>
+    </ul>
+</div>
+
+<div class="ad-pay-bottom">
+    <div class="aui-btn-box2">
+        <div tapmode onclick="openSendRedPacketsWin();" class="aui-btn btn-gradient w-b50">去设置广告红包</div>
+        <div tapmode onclick="detail();" class="aui-btn btn-gradient w-b50">查看广告详情</div>
+    </div>
+</div>
+
+</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/common/global.js"></script>
+<script type="text/javascript">
+	//红包ID
+	var id;
+	
+	apiready = function (){
+		loadRedPackets();
+		initEvent();
+		
+		$api.html($api.byId('businessName1'), global.getBusinessName());
+		$api.html($api.byId('businessName2'), global.getBusinessName());
+	}
+
+	function initEvent(){
+        api.addEventListener({
+	        name:'viewappear'
+        },function(ret,err){
+        	api.closeWin({ name : 'advApplyWin' });
+        	api.closeWin({ name : 'collectionInfoAginWin' });
+        });
+        
+        api.addEventListener({
+	        name:'collectionInfoSubmitEvent'
+        },function(ret,err){
+        	loadRedPackets();
+        });
+	}
+		
+	/**
+	 *加载红包信息
+	 */
+	function loadRedPackets(){
+		//加载服务端数据
+		api.ajax({
+			method : 'get',
+			cache : false,
+			dataType : 'json',
+			returnAll : false,
+			url : global.getRequestUri() + '/collection',
+			headers : global.getRequestToken()
+		}, function(ret, err) {
+			if (ret) {
+				var redpacketsInfo = ret;
+				bindData(redpacketsInfo);
+			}
+		});
+	}
+
+	/**
+	 *加载数据
+	 */
+	function bindData(redpacketsInfo){
+		if(redpacketsInfo){
+			id = redpacketsInfo.id;
+			$api.html($api.byId('content'), redpacketsInfo.summary);
+			$api.html($api.byId('locationDiv'), redpacketsInfo.cityName.replace(",市辖区", "").replace(",县", ""));
+			
+			if(redpacketsInfo.summary){
+				var timeWord = 120 - redpacketsInfo.summary.length;
+				$api.html($api.byId('word'), timeWord);
+			}
+			
+			var interests = redpacketsInfo.interest.split(",");
+			var tempInterest = "";
+			for(var i=0; i<interests.length; i++){
+				if(i > 1){
+					tempInterest = '/…';
+				}else{
+					if(i===0){
+						tempInterest = '<span>' +　interests[i] +　'</span>';
+					}else{
+						tempInterest = '/<span>' +　interests[i] +　'</span>';
+					}
+				}
+				$api.append($api.byId('interestDiv'), tempInterest);
+			}
+			
+			$api.html($api.byId('contactDiv'), redpacketsInfo.contact);
+			$api.html($api.byId('wxDiv'), redpacketsInfo.wx);
+
+			$api.html($api.byId('images'), '');
+			if(redpacketsInfo.banners && redpacketsInfo.banners.length > 0){
+				for(var i=0; i<redpacketsInfo.banners.length; i++){
+					$api.append($api.byId('images'), '<div class="position-r"><img src="' + global.getImgUri() + '/' + redpacketsInfo.banners[i].banner + '"></div>');
+				}
+			}else{
+				$api.append($api.byId('images'), '<div class="position-r"><img src="../../image/receive/redpacket_d_2.png"></div>');
+			}
+
+			$api.addCls($api.byId('failDiv'), 'aui-hide');
+			$api.addCls($api.byId('applingDiv'), 'aui-hide');
+			$api.addCls($api.byId('passDiv'), 'aui-hide');
+			switch(redpacketsInfo.status){
+				case -1:
+					$api.removeCls($api.byId('failDiv'), 'aui-hide');
+					$api.html($api.byId('auditNote'), redpacketsInfo.auditNote);
+					break;
+				case 0:
+					$api.removeCls($api.byId('applingDiv'), 'aui-hide');
+					break;
+				case 1:
+					$api.removeCls($api.byId('passDiv'), 'aui-hide');
+					break;
+			}
+		}
+	}
+
+	function detail(){
+        var params = { id: id, page: '../send/collection_detail', title : '红包集广告'};
+        global.openWinName('collectionDetailWin', '../common/common_win', params);
+	}
+	
+	/**
+	 *打开红包设置
+	 */
+	function openSendRedPacketsWin(){
+		var params = { "id" : id , page: '../send/collection_set', title : '设置广告红包'};
+		global.openWinName('mapSetWin', '../common/common_win', params);
+	}
+
+	/**
+	 *编辑
+	 */
+	function openEditRedPacketsWin(){
+		var params = { "page" : "../send/collection_resubmit", "title" : "编辑广告内容", "id" : id  };
+		api.openWin({
+			name : 'collectionInfoAginWin',
+			url : '../common/common_win.html',
+			pageParam : params
+		});
+	}
+	
+	function callTel(tel){
+		api.call({
+            type : 'tel_prompt',
+            number : tel
+        });
+	}
+</script>
+</html>
